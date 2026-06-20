@@ -6,6 +6,7 @@ import { logger } from "./lib/logger";
 
 const app: Express = express();
 
+// Yahan pinoHttp ko sahi tarike se call kiya gaya hai
 app.use(
   pinoHttp({
     logger,
