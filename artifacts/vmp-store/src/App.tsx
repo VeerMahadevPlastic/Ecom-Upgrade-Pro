@@ -4,11 +4,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/contexts/CartContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
+import { NotificationBell } from "@/components/NotificationBell";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import Products from "@/pages/products";
 import ProductDetail from "@/pages/product-detail";
 import Checkout from "@/pages/checkout";
+import Admin from "@/pages/admin";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,6 +28,7 @@ function Router() {
       <Route path="/products" component={Products} />
       <Route path="/products/:id" component={ProductDetail} />
       <Route path="/checkout" component={Checkout} />
+      <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -39,6 +42,7 @@ function App() {
           <TooltipProvider>
             <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
               <Router />
+              <NotificationBell />
             </WouterRouter>
             <Toaster />
           </TooltipProvider>

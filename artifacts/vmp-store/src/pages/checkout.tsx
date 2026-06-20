@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { MessageCircle, ArrowLeft, ChevronRight, Package, User, MapPin, Check } from "lucide-react";
+import { MessageCircle, ArrowLeft, ChevronRight, Package, User, MapPin, Check, Pencil, UserCheck } from "lucide-react";
 import { Layout } from "@/components/layout/layout";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
@@ -10,6 +10,32 @@ import { calculatePricing } from "@/lib/pricing";
 import { useSubmitEnquiry } from "@workspace/api-client-react";
 
 const STEPS = ["Cart Review", "Your Details", "Confirm & WhatsApp"];
+const PROFILE_KEY = "vmp_customer_profile";
+
+type CustomerProfile = {
+  customerName: string;
+  mobile: string;
+  businessName: string;
+  gstin: string;
+  address: string;
+  district: string;
+  pincode: string;
+};
+
+function loadProfile(): CustomerProfile | null {
+  try {
+    const raw = localStorage.getItem(PROFILE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveProfile(data: CustomerProfile) {
+  try {
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(data));
+  } catch { /* ignore */ }
+}
 
 export default function Checkout() {
   const [step, setStep] = useState(0);
@@ -18,14 +44,17 @@ export default function Checkout() {
   const { currency } = useCurrency();
   const { mutateAsync: createEnquiry, isPending } = useSubmitEnquiry();
 
+  const savedProfile = loadProfile();
+  const [isEditingProfile, setIsEditingProfile] = useState(!savedProfile);
+
   const [form, setForm] = useState({
-    customerName: "",
-    mobile: "",
-    businessName: "",
-    gstin: "",
-    address: "",
-    district: "",
-    pincode: "",
+    customerName: savedProfile?.customerName ?? "",
+    mobile: savedProfile?.mobile ?? "",
+    businessName: savedProfile?.businessName ?? "",
+    gstin: savedProfile?.gstin ?? "",
+    address: savedProfile?.address ?? "",
+    district: savedProfile?.district ?? "",
+    pincode: savedProfile?.pincode ?? "",
     notes: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -65,6 +94,16 @@ export default function Checkout() {
           totalAmount,
           notes: form.notes || undefined,
         }
+      });
+      // Save profile for next visit
+      saveProfile({
+        customerName: form.customerName,
+        mobile: form.mobile,
+        businessName: form.businessName,
+        gstin: form.gstin,
+        address: form.address,
+        district: form.district,
+        pincode: form.pincode,
       });
       clearCart();
       window.open(res.whatsappUrl, "_blank");
@@ -152,102 +191,134 @@ export default function Checkout() {
         {/* Step 1: Details */}
         {step === 1 && (
           <div>
-            <div className="bg-card border rounded-xl p-6 mb-6 space-y-4">
-              <div className="flex items-center gap-2 font-semibold mb-2">
-                <User className="h-4 w-4 text-primary" />
-                Contact Details
+            {/* Saved profile banner */}
+            {savedProfile && !isEditingProfile && (
+              <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4 mb-4 flex items-start justify-between gap-3">
+                <div className="flex items-start gap-2.5">
+                  <UserCheck className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">Details pre-filled from your last order</p>
+                    <p className="text-xs text-emerald-700 dark:text-emerald-400 mt-0.5">
+                      {form.customerName} · {form.mobile}{form.businessName ? ` · ${form.businessName}` : ""}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsEditingProfile(true)}
+                  className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-200 border border-emerald-300 dark:border-emerald-700 px-2.5 py-1.5 rounded-lg shrink-0 transition-colors"
+                >
+                  <Pencil className="h-3 w-3" /> Edit
+                </button>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <label className="text-xs font-medium text-muted-foreground block mb-1">Full Name *</label>
-                  <input
-                    value={form.customerName}
-                    onChange={e => handleField("customerName", e.target.value)}
-                    placeholder="Your name"
-                    className={`w-full border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring ${errors.customerName ? "border-destructive" : ""}`}
-                  />
-                  {errors.customerName && <p className="text-xs text-destructive mt-1">{errors.customerName}</p>}
+            )}
+
+            {(!savedProfile || isEditingProfile) && (
+              <div className="bg-card border rounded-xl p-6 mb-6 space-y-4">
+                <div className="flex items-center gap-2 font-semibold mb-2">
+                  <User className="h-4 w-4 text-primary" />
+                  Contact Details
                 </div>
-                <div className="col-span-2 sm:col-span-1">
-                  <label className="text-xs font-medium text-muted-foreground block mb-1">Mobile *</label>
-                  <input
-                    value={form.mobile}
-                    onChange={e => handleField("mobile", e.target.value)}
-                    placeholder="10-digit mobile"
-                    maxLength={10}
-                    className={`w-full border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring ${errors.mobile ? "border-destructive" : ""}`}
-                  />
-                  {errors.mobile && <p className="text-xs text-destructive mt-1">{errors.mobile}</p>}
-                </div>
-                <div className="col-span-2 sm:col-span-1">
-                  <label className="text-xs font-medium text-muted-foreground block mb-1">Business Name</label>
-                  <input
-                    value={form.businessName}
-                    onChange={e => handleField("businessName", e.target.value)}
-                    placeholder="Optional"
-                    className="w-full border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                  />
-                </div>
-                {currency === 'INR' && (
+                <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
-                    <label className="text-xs font-medium text-muted-foreground block mb-1">GSTIN</label>
+                    <label className="text-xs font-medium text-muted-foreground block mb-1">Full Name *</label>
                     <input
-                      value={form.gstin}
-                      onChange={e => handleField("gstin", e.target.value)}
-                      placeholder="For GST invoice"
+                      value={form.customerName}
+                      onChange={e => handleField("customerName", e.target.value)}
+                      placeholder="Your name"
+                      className={`w-full border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring ${errors.customerName ? "border-destructive" : ""}`}
+                    />
+                    {errors.customerName && <p className="text-xs text-destructive mt-1">{errors.customerName}</p>}
+                  </div>
+                  <div className="col-span-2 sm:col-span-1">
+                    <label className="text-xs font-medium text-muted-foreground block mb-1">Mobile *</label>
+                    <input
+                      value={form.mobile}
+                      onChange={e => handleField("mobile", e.target.value)}
+                      placeholder="10-digit mobile"
+                      maxLength={10}
+                      className={`w-full border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring ${errors.mobile ? "border-destructive" : ""}`}
+                    />
+                    {errors.mobile && <p className="text-xs text-destructive mt-1">{errors.mobile}</p>}
+                  </div>
+                  <div className="col-span-2 sm:col-span-1">
+                    <label className="text-xs font-medium text-muted-foreground block mb-1">Business Name</label>
+                    <input
+                      value={form.businessName}
+                      onChange={e => handleField("businessName", e.target.value)}
+                      placeholder="Optional"
                       className="w-full border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
                     />
                   </div>
+                  {currency === 'INR' && (
+                    <div className="col-span-2">
+                      <label className="text-xs font-medium text-muted-foreground block mb-1">GSTIN</label>
+                      <input
+                        value={form.gstin}
+                        onChange={e => handleField("gstin", e.target.value)}
+                        placeholder="For GST invoice"
+                        className="w-full border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="border-t pt-4 flex items-center gap-2 font-semibold mb-2">
+                  <MapPin className="h-4 w-4 text-primary" />
+                  Delivery Address
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="col-span-2">
+                    <label className="text-xs font-medium text-muted-foreground block mb-1">Address *</label>
+                    <textarea
+                      value={form.address}
+                      onChange={e => handleField("address", e.target.value)}
+                      placeholder="Full delivery address"
+                      rows={3}
+                      className={`w-full border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring resize-none ${errors.address ? "border-destructive" : ""}`}
+                    />
+                    {errors.address && <p className="text-xs text-destructive mt-1">{errors.address}</p>}
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground block mb-1">District</label>
+                    <input
+                      value={form.district}
+                      onChange={e => handleField("district", e.target.value)}
+                      placeholder="District"
+                      className="w-full border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground block mb-1">Pincode</label>
+                    <input
+                      value={form.pincode}
+                      onChange={e => handleField("pincode", e.target.value)}
+                      placeholder="Pincode"
+                      maxLength={6}
+                      className="w-full border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                    />
+                  </div>
+                </div>
+
+                {savedProfile && isEditingProfile && (
+                  <button onClick={() => setIsEditingProfile(false)} className="text-xs text-muted-foreground hover:text-foreground underline">
+                    Cancel editing
+                  </button>
                 )}
               </div>
+            )}
 
-              <div className="border-t pt-4 flex items-center gap-2 font-semibold mb-2">
-                <MapPin className="h-4 w-4 text-primary" />
-                Delivery Address
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <label className="text-xs font-medium text-muted-foreground block mb-1">Address *</label>
-                  <textarea
-                    value={form.address}
-                    onChange={e => handleField("address", e.target.value)}
-                    placeholder="Full delivery address"
-                    rows={3}
-                    className={`w-full border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring resize-none ${errors.address ? "border-destructive" : ""}`}
-                  />
-                  {errors.address && <p className="text-xs text-destructive mt-1">{errors.address}</p>}
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-muted-foreground block mb-1">District</label>
-                  <input
-                    value={form.district}
-                    onChange={e => handleField("district", e.target.value)}
-                    placeholder="District"
-                    className="w-full border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-muted-foreground block mb-1">Pincode</label>
-                  <input
-                    value={form.pincode}
-                    onChange={e => handleField("pincode", e.target.value)}
-                    placeholder="Pincode"
-                    maxLength={6}
-                    className="w-full border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                  />
-                </div>
-                <div className="col-span-2">
-                  <label className="text-xs font-medium text-muted-foreground block mb-1">Notes</label>
-                  <textarea
-                    value={form.notes}
-                    onChange={e => handleField("notes", e.target.value)}
-                    placeholder="Special requirements, packing preferences..."
-                    rows={2}
-                    className="w-full border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring resize-none"
-                  />
-                </div>
-              </div>
+            {/* Notes always visible */}
+            <div className="bg-card border rounded-xl p-4 mb-6">
+              <label className="text-xs font-medium text-muted-foreground block mb-1">Special Notes / Requirements</label>
+              <textarea
+                value={form.notes}
+                onChange={e => handleField("notes", e.target.value)}
+                placeholder="Special requirements, packing preferences, delivery instructions..."
+                rows={2}
+                className="w-full border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+              />
             </div>
+
             <Button
               className="w-full h-12 font-bold text-base"
               onClick={() => { if (validateDetails()) setStep(2); }}
@@ -285,6 +356,7 @@ export default function Checkout() {
               {form.gstin && <div className="flex justify-between"><span className="text-muted-foreground">GSTIN</span><span className="font-mono text-xs">{form.gstin}</span></div>}
               <div className="flex justify-between"><span className="text-muted-foreground">Address</span><span className="text-right max-w-[60%]">{form.address}{form.district ? `, ${form.district}` : ""}{form.pincode ? ` - ${form.pincode}` : ""}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Currency</span><span>{currency}</span></div>
+              <button onClick={() => setStep(1)} className="text-xs text-primary hover:underline mt-1 block">Edit details</button>
             </div>
 
             <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 text-sm text-green-800">

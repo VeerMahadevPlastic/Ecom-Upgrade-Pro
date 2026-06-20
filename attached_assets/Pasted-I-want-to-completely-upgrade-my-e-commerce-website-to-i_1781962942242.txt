@@ -1,0 +1,27 @@
+I want to completely upgrade my e-commerce website to include persistent customer data, a hidden code-activated Admin Panel, and a fully enabled Push Notification system. Please implement the following features systematically without breaking any existing WhatsApp ordering or UPI generation workflows:
+
+1. Customer Data Persistence (No Repeat Entry):
+   - Update the checkout logic so that when a customer places their first order and enters their details (Name, Mobile, Business Address, and optional GSTIN), this data is securely saved in their browser's localStorage.
+   - On future visits, if data exists in localStorage, automatically pre-fill the checkout fields so they do not have to type their information again. Provide a clean option to "Edit Details" if they need to update it.
+
+2. Code-Activated Hidden Admin Section (Secret Login):
+   - In the normal User Login modal/section, completely hide the Admin login option. It must be invisible to regular users.
+   - Implement a listener where the Admin Section only unlocks/appears if a specific secret code or keyboard combination is typed or entered into the login interface. Let's use the code "VMPADMIN2026" or a hidden trigger action.
+   - Once the correct secret code is entered, open a highly professional "Veer Mahadev Plastic Admin Dashboard".
+
+3. Full-Featured Admin Dashboard Mechanics:
+   - Inside this hidden Admin Section, build interactive tools to manage the entire store data dynamically:
+     * Add New Product: Forms to enter Product Name, Image URL Link, and Pricing.
+     * Live Price Updates: Ability to modify the Retail Price, Wholesale Tier 1 Price, and Wholesale Tier 2 Factory Price for any product.
+     * Live Image Updates: Input box to swap or change any product's image link instantly.
+   - Ensure all changes made in the Admin Dashboard instantly update the #productGrid and persist using localStorage (or the website's database array) so changes stay live upon page reload.
+
+4. Enable OneSignal Push Notification System:
+   - The platform currently does not have the push notification options enabled. Please integrate and configure the OneSignal SDK into the application.
+   - Add a clean, modern bell icon prompt or banner inviting users to "Subscribe to Live Stock & Price Updates".
+   - Inside the hidden Admin Panel, add a dedicated "Send Push Notification" tool where I can type a Title and Message (e.g., "New Cups Stock Arrived! Check Factory Rates") and broadcast it instantly to all subscribed customers via OneSignal API.
+
+5. Premium Amazon UI Standards:
+   - Wrap all these features in an ultra-clean, modern theme using high-contrast slate-gray/dark-emerald backgrounds, consistent white space, crisp typography, and responsive square product cards.
+
+Please scan the existing codebase and safely inject these backend scripts and UI panels now.
