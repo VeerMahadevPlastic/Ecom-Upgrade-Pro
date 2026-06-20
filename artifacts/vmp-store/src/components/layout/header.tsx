@@ -7,6 +7,7 @@ import { CURRENCIES, CurrencyCode } from "../../lib/currency";
 import { Button } from "../ui/button";
 import { useDebounce } from "../../hooks/use-debounce";
 import { useGetSearchSuggestions } from "@workspace/api-client-react";
+import logoUrl from "/vm-plastic-logo.png";
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -49,9 +50,7 @@ export function Header() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
-          <div className="bg-primary text-primary-foreground font-bold px-2 py-1 rounded text-sm tracking-wider">
-            VMP
-          </div>
+          <img src={logoUrl} alt="VM Plastic" className="h-9 w-9 object-contain rounded-full" />
           <span className="hidden sm:inline-block font-semibold text-lg tracking-tight">
             Veer Mahadev Plastic
           </span>
@@ -137,7 +136,7 @@ export function Header() {
           </Button>
 
           <a
-            href="https://wa.me/919999999999"
+            href="https://wa.me/918050389261"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden lg:flex items-center gap-2 bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/30 px-3 py-2 rounded-md font-medium text-sm transition-colors"

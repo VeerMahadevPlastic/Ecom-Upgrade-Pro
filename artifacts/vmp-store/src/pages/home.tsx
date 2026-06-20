@@ -56,7 +56,7 @@ export default function Home() {
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="font-bold text-base h-12 px-8 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent">
-                <a href="https://wa.me/919999999999" target="_blank" rel="noopener noreferrer">
+                <a href="https://wa.me/918050389261" target="_blank" rel="noopener noreferrer">
                   WhatsApp Us
                 </a>
               </Button>

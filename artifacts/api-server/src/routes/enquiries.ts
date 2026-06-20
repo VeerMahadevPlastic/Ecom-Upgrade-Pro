@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 
 const router = Router();
 
-const WHATSAPP_NUMBER = "919XXXXXXXXX"; // Replace with real number
+const WHATSAPP_NUMBER = "918050389261";
 
 const CURRENCY_SYMBOLS: Record<string, string> = {
   INR: "₹",
