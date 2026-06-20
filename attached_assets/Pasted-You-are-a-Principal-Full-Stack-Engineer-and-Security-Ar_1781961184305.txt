@@ -1,0 +1,30 @@
+You are a Principal Full-Stack Engineer and Security Architect. We need to completely modernize our B2B website login module, checkout profile payload hook, and order communication routing pipeline to make it mirror a production enterprise system like Amazon B2B.
+
+Inject the following core engineering blocks cleanly into index.html, index-part2.html, and their associated JavaScript initialization modules. Keep all currency dynamic matrix arrays and PhonePe webhooks fully integrated.
+
+---
+
+### 1. AMAZON-STYLE OTP AUTH MODAL (UI & Simulation Script):
+- Replace the legacy primitive login inputs with a dual-step modern authentication component:
+  - Step 1: Input Field for Mobile Number or Corporate Email Address with a "Continue / Request OTP" action trigger.
+  - Step 2: Hidden dynamic container that smoothly slides in to reveal a 4-digit or 6-digit Secure Verification Code (OTP) field with a timer-based "Resend OTP" link.
+- Implement robust JavaScript validation simulation that logs secure access tokens into the client-side local sessionStorage upon verified authentication, setting the session context state to 'Authenticated'.
+
+---
+
+### 2. COMPREHENSIVE ADDRESS & ONBOARDING DATA HOOK:
+- In the final ordering page / checkout funnel drawer, enforce a strict "B2B Delivery Matrix Form" if the profile session data is missing context records.
+- Fields required: Full Consignee Name, Active Mobile Number, Complete Street Address, Landmark, District/State, Pin Code, and an optional Corporate GSTIN field.
+- Bind this form object so that it maps directly into the cart evaluation array when a checkout submission transaction is initialized.
+
+---
+
+### 3. SERVER-DRIVEN AUTOMATED WHATSAPP NOTIFICATION LOGIC:
+- Rewrite the checkout success flow. Instead of relying on client-side deep links that open the customer's personal WhatsApp app (`wa.me`), we must route order payloads via a system-driven webhook template.
+- Implement an optimized AJAX/Fetch call structure placeholder pointing to an internal processing function or API controller route:
+  ```javascript
+  async function triggerSystemOrderNotification(orderPayload) {
+      console.log("VMP System Engine: Dispatching server-side automated B2B WhatsApp payload...");
+      // Structure contains: Customer Auth Token, Full Shipping Address, Item Array, Total Cartons, Currency Total.
+      // Triggers outbound transactional notification through server-managed communication gateway endpoints.
+  }

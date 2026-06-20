@@ -1,0 +1,35 @@
+You are a Staff Full-Stack Software Engineer. We want to upgrade our B2B website infrastructure to support international wholesalers from the US, UK, Turkey, and Russia, alongside our domestic Indian market. 
+
+Carefully inject the following modules into index.html and index-part2.html without removing any active features, PhonePe UPI logic, or product card matrices.
+
+---
+
+### 1. DYNAMIC REGIONAL CURRENCY SWITCHER (UI & Logic):
+- Add a professional, compact dropdown switcher in the navigation bar/header area.
+- Options: INR (₹), USD ($), GBP (£), TRY (₺), RUB (₽).
+- Write a lightweight JavaScript engine to update prices dynamically across the product catalog when a new currency is selected. 
+- Use baseline factory export multiplier values for conversion logic:
+  - If USD selected: Apply 1 INR = 0.012 USD baseline to all list item piece rates.
+  - If GBP selected: Apply 1 INR = 0.0095 GBP baseline.
+  - If TRY selected: Apply 1 INR = 0.39 TRY baseline.
+  - If RUB selected: Apply 1 INR = 1.05 RUB baseline.
+
+---
+
+### 2. GLOBAL LOGISTICS & EXPEDITION ESTIMATOR HOOK:
+- In the existing order tracking / carton calculator zone, add an "International Shipping Route Estimator" block.
+- Include a selection dropdown for: "Domestic Hub Dispatch", "JNPT Port (Mumbai) - Ocean Freight", "Mundra Port (Gujarat) - Export Container", and "Air Cargo Fast-Track".
+- Display placeholder dynamic messaging based on selection:
+  - For Ocean Freight: "Est. Transit: 18-25 Days. Port Clearance & Customs Documentation generated on invoice."
+  - For Air Cargo: "Est. Transit: 5-7 Business Days. Priority customs routing enabled."
+
+---
+
+### 3. WORLDWIDE BRANDING & DOCKING TEMPLATE:
+- Update the hero section banner and header layout to feature our premium global branding aesthetic.
+- Place a text/badge layer or style variation referencing: "VEER MAHADEV PLASTIC WORLDWIDE • GLOBAL EXPORT QUALITY STANDARDS • ESTD. SINCE 2024".
+
+---
+
+### 4. COMPATIBILITY RETAINMENT:
+- Keep all script definitions, Tailwind CSS frameworks, performance loops, and checkout triggers perfectly intact. Do not compress or truncate the file contents.

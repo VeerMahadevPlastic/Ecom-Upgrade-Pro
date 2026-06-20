@@ -1,0 +1,34 @@
+You are a Principal Frontend Architect. This is the final blueprint upgrade to make our B2B manufacturing website completely future-proof for both high-volume domestic Indian distributors and global international importers. 
+
+Inject these final 3 structural production modules into index.html and index-part2.html. Ensure all previous currency systems, item grids, and checkout loops remain completely active and pristine.
+
+---
+
+### 1. BULK TIERING & CARTON CALCULATOR ENGINE:
+- Create a dedicated dynamic utility logic attached to the product ordering inputs.
+- For every product item, assume a baseline standard wholesale packing size of 1,000 pieces per master carton (or use the custom PACKING value from our data).
+- When a user changes the item quantity, display an inline live badge showing the conversion: "📦 equivalent to X Master Cartons".
+- Implement an automated high-volume discount tier:
+  - Orders >= 10 Master Cartons: Apply an automatic 3% factory-level volume discount on the total item piece rate.
+  - Orders >= 25 Master Cartons: Apply an automatic 5% bulk contract discount.
+  - Reflect this price reduction instantly in the cart summary before checkout.
+
+---
+
+### 2. SMART B2B WHATSAPP QUOTATION GENERATOR:
+- In the final checkout modal/section, alongside the instant payment hook, add a highly prominent alternative action button: "📄 Get Official Factory Quotation via WhatsApp".
+- Write a JavaScript helper to stringify the entire current cart inventory layout into a cleanly formatted, professional text template.
+- Structure the text draft to cleanly list: Item Names, Total Quantity ordered, Cartons equivalent, Selected Currency, and Net Total Value.
+- Encode this summary text and map it directly to open an external window pointing to: `https://wa.me/91XXXXXXXXXX?text=[Encoded_Quotation_Summary_Data]`. (Leave the phone parameter easily editable).
+
+---
+
+### 3. DOMESTIC GST / GLOBAL EXPORT CUSTOMS MATRIX:
+- In the billing/invoice calculation summary panel, implement a dynamic Tax Toggle or auto-select mechanism based on the currency/region selected in the header:
+  - If the currency is INR: Display a line-item row for "GST (18% / Corporate Invoice Input Claim Enabled)".
+  - If the currency is USD/GBP/TRY/RUB: Switch the layout label dynamically to "FOB Export Terms (Port Handling & Custom Export Docs Clearance Included under Letter of Credit baseline)". Set the tax value field to 0 or "Included at Customs Point".
+
+---
+
+### 4. ARCHITECTURAL GUARDRAILS:
+- Do not remove, replace, or overwrite any core component styles, Tailwind asset declarations, or underlying payment webhooks. Execute this as an additive framework upgrade.

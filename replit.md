@@ -1,10 +1,11 @@
-# [Project name]
+# Veer Mahadev Plastic — B2B Wholesale Store
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A professional B2B wholesale e-commerce website for **Veer Mahadev Plastic (VMP)**, a biodegradable and plastic food packaging manufacturer.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080, proxied at `/api`)
+- `pnpm --filter @workspace/vmp-store run dev` — run the storefront (port 18133, proxied at `/`)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
@@ -14,23 +15,45 @@ _Replace the heading above with the project's name, and this line with one sente
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
+- Frontend: React + Vite + Tailwind CSS v4 + shadcn/ui
+- API: Express 5, OpenAPI-first (Orval codegen)
 - DB: PostgreSQL + Drizzle ORM
 - Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Build: esbuild (CJS bundle for API)
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/vmp-store/` — React storefront
+  - `src/pages/` — Home, Products, ProductDetail, Checkout
+  - `src/components/layout/` — Header (search+autocomplete+currency), CartDrawer, Footer, Layout
+  - `src/contexts/` — CartContext (localStorage), CurrencyContext (localStorage)
+  - `src/lib/pricing.ts` — Tier pricing logic (retail/bulk/10+ cartons/25+ cartons)
+  - `src/lib/currency.ts` — INR/USD/GBP/TRY/RUB conversion
+- `artifacts/api-server/` — Express API
+  - `src/routes/products.ts` — GET /products (search+filter), GET /products/stats, GET /products/search-suggestions, GET /products/:id
+  - `src/routes/categories.ts` — GET /categories
+  - `src/routes/enquiries.ts` — POST /enquiries (creates enquiry + WhatsApp URL)
+- `lib/db/src/schema/` — Drizzle schema (products, enquiries tables)
+- `lib/api-spec/openapi.yaml` — OpenAPI 3.1 spec (source of truth)
+- `lib/api-client-react/src/generated/` — Orval-generated React Query hooks
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Contract-first: OpenAPI spec → Orval codegen → typed React Query hooks + Zod schemas used server-side
+- WhatsApp checkout: No payment processing — enquiry saved to DB, formatted WhatsApp message opened in new tab
+- Currency conversion: Client-side only (rates hardcoded in `lib/currency.ts` and `routes/enquiries.ts`)
+- Cart: localStorage-persisted, no server-side session required
+- Tier pricing: retail=pieceRate, bulk=boxRate÷packingQty, 10+ cartons=3% off, 25+ cartons=5% off
 
-## Product
+## Product catalog
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- 107 products across 8 categories seeded from VMP price list
+- Categories: Cornstarch Meal Tray with Lid, Cornstarch Container, Cornstarch Bowl & Cutlery, Biodegradable Glass & Bowl, Meal Tray, Hinged Box & Sauce Cup, Bakery Hinged Box, PET & PP Container
+
+## TODO before going live
+
+- Replace WhatsApp number `919XXXXXXXXX` in `artifacts/api-server/src/routes/enquiries.ts`
+- Update currency rates in `lib/api-client-react/src/lib/currency.ts` and `artifacts/api-server/src/routes/enquiries.ts`
 
 ## User preferences
 
@@ -38,8 +61,6 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
-
-## Pointers
-
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+- After editing API routes, restart the `artifacts/api-server: API Server` workflow to trigger esbuild rebuild
+- Google Fonts `@import` must be first line in `index.css` (before Tailwind imports) to avoid PostCSS errors
+- `useListProducts` not `useGetProducts`, `useListCategories` not `useGetCategories`, `useGetProduct` not `useGetProductById`, `useSubmitEnquiry` not `useCreateEnquiry` — check generated hooks before using
