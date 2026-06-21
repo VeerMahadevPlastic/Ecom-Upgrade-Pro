@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "rootDirectory": "artifacts/api-server",
   "installCommand": "pnpm install --no-frozen-lockfile",
   "builds": [
     {
