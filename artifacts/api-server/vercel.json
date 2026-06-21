@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "rootDirectory": "artifacts/api-server",
   "builds": [
     {
       "src": "src/app.ts",
